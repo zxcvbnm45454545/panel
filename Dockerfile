@@ -12,12 +12,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV UV_PYTHON_DOWNLOADS=0
 
 WORKDIR /build
-RUN --mount=type=cache,target=/root/.cache/uv \
+RUN --mount=type=cache,target=/root/.cache/uv,id=uv-cache-1 \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project --no-dev
 ADD . /build
-RUN --mount=type=cache,target=/root/.cache/uv \
+RUN --mount=type=cache,target=/root/.cache/uv,id=uv-cache-1 \
     uv sync --frozen --no-dev
 
 
