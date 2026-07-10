@@ -20,16 +20,19 @@ RUN uv sync --frozen --no-dev
 
 FROM python:$PYTHON_VERSION-slim-bookworm
 
-# Install bun
-RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH="/root/.bun/bin:$PATH"
+# Install bun using npm (این روش مطمئن‌تر است)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    npm \
+    && npm install -g bun \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /build /code
 WORKDIR /code
 
 ENV PATH="/code/.venv/bin:$PATH"
 
-# Install curl for health checks
+# Install curl for health checks (تکرار شده ولی مشکلی ندارد)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
