@@ -20,6 +20,10 @@ RUN uv sync --frozen --no-dev
 
 FROM python:$PYTHON_VERSION-slim-bookworm
 
+# Install bun
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:$PATH"
+
 COPY --from=builder /build /code
 WORKDIR /code
 
