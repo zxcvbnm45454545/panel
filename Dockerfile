@@ -34,14 +34,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /build /code
 WORKDIR /code
 
-# Install dashboard dependencies and build
-WORKDIR /code/dashboard
-RUN bun install
-RUN bun run build
-
-WORKDIR /code
-
 ENV PATH="/code/.venv/bin:$PATH"
+
+# Install dashboard dependencies and build
+RUN cd /code/dashboard && bun install && bun run build
 
 # Install curl for health checks
 RUN apt-get update && apt-get install -y --no-install-recommends \
