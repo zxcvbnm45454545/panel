@@ -25,9 +25,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
     && curl -fsSL https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64.zip -o /tmp/bun.zip \
-    && unzip /tmp/bun.zip -d /usr/local/bin \
+    && unzip /tmp/bun.zip -d /tmp \
+    && mv /tmp/bun-linux-x64/bun /usr/local/bin/bun \
     && chmod +x /usr/local/bin/bun \
-    && rm /tmp/bun.zip \
+    && rm -rf /tmp/bun.zip /tmp/bun-linux-x64 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /build /code
