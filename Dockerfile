@@ -20,19 +20,29 @@ RUN uv sync --frozen --no-dev
 
 FROM python:$PYTHON_VERSION-slim-bookworm
 
-# Install bun using npm (این روش مطمئن‌تر است)
+# Install bun binary directly
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    npm \
-    && npm install -g bun \
+    unzip \
+    && curl -fsSL https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64.zip -o /tmp/bun.zip \
+    && unzip /tmp/bun.zip -d /usr/local/bin \
+    && chmod +x /usr/local/bin/bun \
+    && rm /tmp/bun.zip \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /build /code
 WORKDIR /code
 
+# Install dashboard dependencies and build
+WORKDIR /code/dashboard
+RUN bun install
+RUN bun run build
+
+WORKDIR /code
+
 ENV PATH="/code/.venv/bin:$PATH"
 
-# Install curl for health checks (تکرار شده ولی مشکلی ندارد)
+# Install curl for health checks
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
